@@ -9,7 +9,7 @@ import (
 	"github.com/Marvin9/textar/pkg"
 )
 
-func main() {
+func _main() {
 	// Read the text file
 	content, err := os.ReadFile("./data/shakespeare.txt")
 	if err != nil {
@@ -47,7 +47,7 @@ func main() {
 	})
 }
 
-func test() {
+func main() {
 	dictionaries := []pkg.Dictionary{
 		{
 			Id: "Advanced Data Structures",
@@ -130,8 +130,9 @@ func test() {
 
 	index := pkg.NewDictionaryIndex(dictionaries)
 
-	index.Search("30").Display(pkg.SearchResultOpts{
-		PrefixLength: 10,
+	index.SearchWithOpts("Hi all", pkg.SearchOpts{IncludeParentRelationShip: true}).Display(pkg.SearchResultOpts{
+		// PrefixLength: 10,
 		SuffixLength: 10,
+		ShowParent:   true,
 	})
 }

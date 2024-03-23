@@ -89,8 +89,9 @@ func TestOffsetAndRaw(t *testing.T) {
 		raw := dict.Raw()
 
 		for idx, index := range dict.Indexes {
-			if rune(index.String[0]) != raw[index.Offset] {
-				t.Errorf("ops dictionary %d, index %d. Expected %s, got %s", dictIdx, idx, string(index.String[0]), string(raw[index.Offset]))
+			str := raw.String()
+			if rune(index.String[0]) != rune(str[index.Offset]) {
+				t.Errorf("ops dictionary %d, index %d. Expected %s, got %s", dictIdx, idx, string(index.String[0]), string(str[index.Offset]))
 			}
 		}
 	}

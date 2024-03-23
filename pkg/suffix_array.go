@@ -14,9 +14,10 @@ type Suffix struct {
 type SuffixArray struct {
 	Suffixes       []Suffix
 	OriginalString []rune
+	DictionaryId   string
 }
 
-func NewSuffixArray(rawString []rune) *SuffixArray {
+func NewSuffixArray(rawString []rune, dictionaryId string) *SuffixArray {
 	builder := make([]rune, len(rawString))
 
 	copy(builder, rawString)
@@ -24,6 +25,7 @@ func NewSuffixArray(rawString []rune) *SuffixArray {
 	suffixArr := &SuffixArray{
 		Suffixes:       make([]Suffix, len(rawString)),
 		OriginalString: builder,
+		DictionaryId:   dictionaryId,
 	}
 
 	bucket := map[rune]int64{}

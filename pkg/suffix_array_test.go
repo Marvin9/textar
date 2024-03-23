@@ -67,7 +67,7 @@ func TestSuffixArray(t *testing.T) {
 	// 	wrongEvaluation()
 	// }
 
-	sa := NewSuffixArray([]rune("aabcaadaccdabcdac"))
+	sa := NewSuffixArray([]rune("aabcaadaccdabcdac"), "0")
 
 	matched := sa.Search("aa")
 

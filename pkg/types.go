@@ -22,8 +22,9 @@ func NewIndex(indexType string, actualString string, offset int64) *Index {
 }
 
 type Dictionary struct {
-	Id      string
-	Indexes []Index
+	Id        string
+	Indexes   []Index
+	CachedRaw strings.Builder
 }
 
 func NewDictionary(id string, indexes []Index) *Dictionary {
@@ -33,12 +34,18 @@ func NewDictionary(id string, indexes []Index) *Dictionary {
 	}
 }
 
-func (d *Dictionary) Raw() []rune {
+func (d *Dictionary) Raw() strings.Builder {
+	if d.CachedRaw.Len() != 0 {
+		return d.CachedRaw
+	}
+
 	str := strings.Builder{}
 
 	for _, index := range d.Indexes {
 		str.WriteString(index.String)
 	}
 
-	return []rune(str.String())
+	d.CachedRaw = str
+
+	return d.CachedRaw
 }
