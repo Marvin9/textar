@@ -48,6 +48,9 @@ func BenchmarkTextarShakespear(b *testing.B) {
 			index.Search("How can I then return in happy plight")
 			index.Search("To see his active")
 			index.Search("to")
+			index.Search("But yet be blamed, if thou thy self deceivest")
+			index.Search("Thus can my love excuse the slow offence")
+			index.Search("End of this Etext")
 		}
 	})
 }
@@ -67,6 +70,9 @@ func BenchmarkBruteForceShakespear(b *testing.B) {
 			brute.Search(text, "How can I then return in happy plight")
 			brute.Search(text, "To see his active")
 			brute.Search(text, "to")
+			brute.Search(text, "But yet be blamed, if thou thy self deceivest")
+			brute.Search(text, "Thus can my love excuse the slow offence")
+			brute.Search(text, "End of this Etext")
 		}
 	})
 }
