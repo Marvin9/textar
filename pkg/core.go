@@ -99,5 +99,6 @@ func (di *DictionaryIndex) Search(str string) SearchResult {
 		}
 	}
 
+	searchRes.Occurrences = int64(len(searchRes.matched))
 	return searchRes
 }

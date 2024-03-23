@@ -28,11 +28,11 @@ func TestSuffixArray(t *testing.T) {
 			},
 			{
 				Char:          rune('o'),
-				OriginalIndex: 2,
+				OriginalIndex: 1,
 			},
 			{
 				Char:          rune('o'),
-				OriginalIndex: 1,
+				OriginalIndex: 2,
 			},
 			{
 				Char:          rune('r'),

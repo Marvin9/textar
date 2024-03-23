@@ -26,37 +26,37 @@ func NewSuffixArray(rawString []rune) *SuffixArray {
 		OriginalString: builder,
 	}
 
-	indexer := map[rune][]int64{}
+	bucket := map[rune]int64{}
 
-	for i, rawRune := range rawString {
-		_, exist := indexer[rawRune]
-
-		if !exist {
-			indexer[rawRune] = []int64{}
-		}
-
-		indexer[rawRune] = append(indexer[rawRune], int64(i))
+	// count suffixes
+	for _, char := range rawString {
+		bucket[char]++
 	}
 
-	sort.Slice(rawString, func(i, j int) bool {
-		return rawString[i] < rawString[j]
+	orderedKeys := make([]rune, len(bucket))
+
+	for bucketKey := range bucket {
+		orderedKeys = append(orderedKeys, bucketKey)
+	}
+
+	sort.Slice(orderedKeys, func(i, j int) bool {
+		return orderedKeys[i] < orderedKeys[j]
 	})
 
-	for idx, rn := range rawString {
-		if rn == rune(' ') || rn == rune('\n') {
-			continue
+	// allocate buckets
+	bucket2 := map[rune]int64{}
+	c := int64(0)
+	for _, char := range orderedKeys {
+		bucket2[char] = c
+		c += bucket[char]
+	}
+
+	for i, char := range rawString {
+		suffixArr.Suffixes[bucket2[char]] = Suffix{
+			Char:          char,
+			OriginalIndex: int64(i),
 		}
-
-		item := indexer[rn]
-
-		itemTopIdx := len(item) - 1
-		suffixArr.Suffixes[idx] = Suffix{
-			Char:          rn,
-			OriginalIndex: item[itemTopIdx],
-		}
-
-		item = item[:itemTopIdx]
-		indexer[rn] = item
+		bucket2[char]++
 	}
 
 	return suffixArr

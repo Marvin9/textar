@@ -21,8 +21,8 @@ func BenchmarkTextarShakespear(b *testing.B) {
 
 	// Split the text into dictionaries based on character count
 	var dictionaries []Dictionary
-	for i := 0; i < len(text); i += 1500 {
-		end := i + 1500
+	for i := 0; i < len(text); i += len(text) {
+		end := i + len(text)
 		if end > len(text) {
 			end = len(text)
 		}
