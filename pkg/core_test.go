@@ -42,15 +42,22 @@ func BenchmarkTextarShakespear(b *testing.B) {
 
 	index := NewDictionaryIndex(dictionaries)
 
+	searches := []string{
+		"In singleness the parts that thou shouldst bear",
+		"How can I then return in happy plight",
+		"To see his active",
+		"to",
+		"But yet be blamed, if thou thy self deceivest",
+		"Thus can my love excuse the slow offence",
+		"End of this Etext",
+		"whitely",
+	}
+
 	b.Run("search", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			index.Search("In singleness the parts that thou shouldst bear")
-			index.Search("How can I then return in happy plight")
-			index.Search("To see his active")
-			index.Search("to")
-			index.Search("But yet be blamed, if thou thy self deceivest")
-			index.Search("Thus can my love excuse the slow offence")
-			index.Search("End of this Etext")
+			for _, search := range searches {
+				index.Search(search)
+			}
 		}
 	})
 }
@@ -64,15 +71,22 @@ func BenchmarkBruteForceShakespear(b *testing.B) {
 
 	text := string(content)
 
+	searches := []string{
+		"In singleness the parts that thou shouldst bear",
+		"How can I then return in happy plight",
+		"To see his active",
+		"to",
+		"But yet be blamed, if thou thy self deceivest",
+		"Thus can my love excuse the slow offence",
+		"End of this Etext",
+		"whitely",
+	}
+
 	b.Run("search", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			brute.Search(text, "In singleness the parts that thou shouldst bear")
-			brute.Search(text, "How can I then return in happy plight")
-			brute.Search(text, "To see his active")
-			brute.Search(text, "to")
-			brute.Search(text, "But yet be blamed, if thou thy self deceivest")
-			brute.Search(text, "Thus can my love excuse the slow offence")
-			brute.Search(text, "End of this Etext")
+			for _, search := range searches {
+				brute.Search(text, search)
+			}
 		}
 	})
 }

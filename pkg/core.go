@@ -152,7 +152,7 @@ func (di *DictionaryIndex) RawLevelIndex() string {
 }
 
 func (di *DictionaryIndex) Search(str string) SearchResult {
-	return di.search(str, SearchOpts{})
+	return di.search(str, SearchOpts{IncludeParentRelationShip: false})
 }
 
 func (di *DictionaryIndex) SearchWithOpts(str string, opts SearchOpts) SearchResult {

@@ -18,12 +18,14 @@ type SuffixArray struct {
 }
 
 func NewSuffixArray(rawString []rune, dictionaryId string) *SuffixArray {
-	builder := make([]rune, len(rawString))
+	builder := make([]rune, len(rawString)+1)
 
 	copy(builder, rawString)
 
+	builder[len(rawString)] = '$'
+
 	suffixArr := &SuffixArray{
-		Suffixes:       make([]Suffix, len(rawString)),
+		Suffixes:       make([]Suffix, len(builder)),
 		OriginalString: builder,
 		DictionaryId:   dictionaryId,
 	}
@@ -31,7 +33,7 @@ func NewSuffixArray(rawString []rune, dictionaryId string) *SuffixArray {
 	bucket := map[rune]int64{}
 
 	// count suffixes
-	for _, char := range rawString {
+	for _, char := range builder {
 		bucket[char]++
 	}
 
@@ -42,6 +44,9 @@ func NewSuffixArray(rawString []rune, dictionaryId string) *SuffixArray {
 	}
 
 	sort.Slice(orderedKeys, func(i, j int) bool {
+		if orderedKeys[i] == '$' {
+			return true
+		}
 		return orderedKeys[i] < orderedKeys[j]
 	})
 
@@ -55,17 +60,18 @@ func NewSuffixArray(rawString []rune, dictionaryId string) *SuffixArray {
 		b1b[orderedKey] = 0
 	}
 
-	for i := 0; i < len(rawString)-1; i++ {
-		ti := rawString[i]
-		tiplusone := rawString[i+1]
+	for i := 0; i < len(builder)-1; i++ {
+		ti := builder[i]
+		tiplusone := builder[i+1]
 
-		if ti > tiplusone {
+		if ti > tiplusone || tiplusone == '$' {
 			b1a[ti]++
 		} else {
 			b1b[ti]++
 		}
 	}
 	b1b[0] = 1
+	b1a[builder[len(builder)-1]]++
 
 	c := int64(0)
 	for _, orderedKey := range orderedKeys {
@@ -75,11 +81,11 @@ func NewSuffixArray(rawString []rune, dictionaryId string) *SuffixArray {
 		b2b[orderedKey] = c
 	}
 
-	for i := 0; i < len(rawString)-1; i++ {
-		ti := rawString[i]
-		tiplusone := rawString[i+1]
+	for i := 0; i < len(builder)-1; i++ {
+		ti := builder[i]
+		tiplusone := builder[i+1]
 
-		if ti <= tiplusone {
+		if ti <= tiplusone && tiplusone != '$' {
 			b2b[ti]--
 			suffixArr.Suffixes[b2b[ti]] = Suffix{
 				Char:          ti,
@@ -88,35 +94,43 @@ func NewSuffixArray(rawString []rune, dictionaryId string) *SuffixArray {
 		}
 	}
 
-	// for _, orderedKey := range orderedKeys {
-	// 	if b1b[orderedKey] > 1 {
-	// 		b := b2b[orderedKey]
-	// 		e := b + b1b[orderedKey] - 1
+	ti := builder[len(builder)-1]
+	suffixArr.Suffixes[0] = Suffix{
+		Char:          ti,
+		OriginalIndex: int64(len(builder) - 1),
+	}
 
-	// 		// sort suffix [b, e]
-	// 		sort.Slice(suffixArr.Suffixes[b:e+1], func(i, j int) bool {
-	// 			return strings.Compare(string(rawString[suffixArr.Suffixes[i].OriginalIndex:]), string(rawString[suffixArr.Suffixes[j].OriginalIndex:])) < 0
-	// 		})
-	// 	}
-	// }
+	for _, orderedKey := range orderedKeys {
+		if b1b[orderedKey] > 1 {
+			b := b2b[orderedKey]
+			e := b + b1b[orderedKey] - 1
 
-	for i := 0; i < len(rawString)-1; i++ {
+			// sort suffix [b, e]
+			sort.Slice(suffixArr.Suffixes[b:e+1], func(i, j int) bool {
+				return len(builder[suffixArr.Suffixes[i].OriginalIndex:]) < len(builder[suffixArr.Suffixes[j].OriginalIndex:])
+			})
+		}
+	}
+
+	for i := 0; i < len(builder); i++ {
 		ai := suffixArr.Suffixes[i].OriginalIndex
 		aiminusone := ai - 1
 
-		if aiminusone == -1 {
-			aiminusone = int64(len(rawString) - 1)
+		if ai == 0 {
+			continue
 		}
 
-		if rawString[aiminusone] > rawString[ai] {
-			a := rawString[aiminusone]
+		if builder[ai] == '$' || builder[aiminusone] > builder[ai] {
+			a := builder[aiminusone]
 			suffixArr.Suffixes[b2a[a]] = Suffix{
 				OriginalIndex: aiminusone,
-				Char:          rawString[aiminusone],
+				Char:          builder[aiminusone],
 			}
 			b2a[a]++
 		}
 	}
+
+	// fmt.Println(suffixArr.Raw())
 
 	return suffixArr
 }
@@ -127,7 +141,7 @@ func (sa *SuffixArray) Search(str string) []int64 {
 
 	indexes := []int64{}
 
-	for low < high {
+	for low <= high {
 		mid := (low + high) / 2
 
 		if rune(str[0]) < sa.Suffixes[mid].Char {
@@ -169,7 +183,9 @@ func (sa *SuffixArray) Raw() string {
 	saRaw := &strings.Builder{}
 
 	for _, suffixes := range sa.Suffixes {
-		saRaw.WriteRune(suffixes.Char)
+		saRaw.WriteString(string(sa.OriginalString[suffixes.OriginalIndex:]))
+		// saRaw.WriteRune(suffixes.Char)
+		saRaw.WriteString("\n--------------------------------------------------\n\n")
 	}
 
 	return saRaw.String()

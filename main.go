@@ -48,6 +48,11 @@ func _main() {
 }
 
 func main() {
+	// pkg.NewSuffixArray([]rune(`Hi all,
+
+	// `), "0")
+	// return
+
 	dictionaries := []pkg.Dictionary{
 		{
 			Id: "Advanced Data Structures",
@@ -79,7 +84,7 @@ func main() {
 					String: `I have opened submission for project proposals. You can find it under assessments->assignments->Project Proposal (CSCI 6057 only).
 
 					Note that this is for students enrolled in CSCI 6057 only.
-					
+
 					As scheduled at the beginning of this term, the next assignment will be posted on March 12, so that graduate students will have time for the proposals.`,
 				},
 			},
@@ -130,7 +135,7 @@ func main() {
 
 	index := pkg.NewDictionaryIndex(dictionaries)
 
-	index.SearchWithOpts("Hi all", pkg.SearchOpts{IncludeParentRelationShip: true}).Display(pkg.SearchResultOpts{
+	index.SearchWithOpts("office", pkg.SearchOpts{IncludeParentRelationShip: true}).Display(pkg.SearchResultOpts{
 		// PrefixLength: 10,
 		SuffixLength: 10,
 		ShowParent:   true,
