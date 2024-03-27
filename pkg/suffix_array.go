@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"math"
 	"sort"
 	"strings"
@@ -108,7 +107,7 @@ func NewSuffixArray(rawString []rune, dictionaryId string) *SuffixArray {
 
 			// sort suffix [b, e]
 			sort.SliceStable(suffixArr.Suffixes[b:e+1], func(i, j int) bool {
-				return suffixArr.Suffixes[int(b)+i].OriginalIndex < suffixArr.Suffixes[int(b)+j].OriginalIndex
+				return suffixArr.Suffixes[int(b)+i].OriginalIndex > suffixArr.Suffixes[int(b)+j].OriginalIndex
 			})
 		}
 	}
@@ -184,9 +183,8 @@ func (sa *SuffixArray) Raw() string {
 	saRaw := &strings.Builder{}
 
 	for _, suffixes := range sa.Suffixes {
-		// saRaw.WriteString(string(sa.OriginalString[suffixes.OriginalIndex:]))
-		saRaw.WriteString(fmt.Sprintf("%d", suffixes.OriginalIndex))
-		// saRaw.WriteString("\n--------------------------------------------------\n\n")
+		saRaw.WriteString(string(sa.OriginalString[suffixes.OriginalIndex:]))
+		saRaw.WriteString("\n--------------------------------------------------\n\n")
 	}
 
 	return saRaw.String()
