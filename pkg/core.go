@@ -93,9 +93,12 @@ type SearchResultOpts struct {
 	ShowParent bool
 }
 
-const displayTemplate = `dictionary-id: %s
-match: %s
-`
+const displayTemplate = `
+--------------------------------------
+
+dictionary-id: %s
+
+match: %s`
 
 func (sr SearchResult) Display(opts SearchResultOpts) {
 	for _, matched := range sr.matched {
@@ -109,11 +112,13 @@ func (sr SearchResult) Display(opts SearchResultOpts) {
 
 		pred := ""
 		if opts.ShowParent {
-			pred = fmt.Sprintf(
-				"predecessor - %s - %s\n\n",
-				matched.largestPredecessor._type,
-				orig[matched.largestPredecessor.indexRange[0]:matched.largestPredecessor.indexRange[1]],
-			)
+			if matched.largestPredecessor.indexRange[0]+matched.largestPredecessor.indexRange[1] >= 0 {
+				pred = fmt.Sprintf(
+					"\npredecessor - %s - %s",
+					matched.largestPredecessor._type,
+					orig[matched.largestPredecessor.indexRange[0]:matched.largestPredecessor.indexRange[1]],
+				)
+			}
 		}
 
 		if opts.PrefixLength > 0 {
@@ -135,7 +140,7 @@ func (sr SearchResult) Display(opts SearchResultOpts) {
 func (di *DictionaryIndex) RawLevelIndex() string {
 	str := strings.Builder{}
 	for dictId, dict := range di.levelIndex {
-		str.WriteString(fmt.Sprintf("dictionary id - %s\n", dictId))
+		str.WriteString(fmt.Sprintf("dictionary id - %s\n\n", dictId))
 		for idx, levels := range dict {
 			str.WriteString(fmt.Sprintf("type - %s\n", levels.Type))
 			for _, dict := range di.dictIndexes {
