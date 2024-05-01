@@ -20,7 +20,7 @@ func main() {
 	}
 
 	// Open the file
-	file, err := os.Open("../textar-data/github.json")
+	file, err := os.Open("./data/github.json")
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -67,6 +67,29 @@ func main() {
 			break
 		}
 
+		// matches := []string{}
+		// parents := []int{}
+		// latencyBruteFoce := pkg.MeasureTime(func() {
+		// 	for _, dict := range dictionaries {
+		// 		for indexIdx, index := range dict.Indexes {
+		// 			res := brute.Search(index.String, query)
+		// 			if len(res) > 0 {
+		// 				matches = append(matches, res...)
+
+		// 				tmpIndexIdx := indexIdx - 1
+		// 				for tmpIndexIdx >= 0 && dict.Indexes[tmpIndexIdx].Type != index.Type {
+		// 					tmpIndexIdx--
+		// 				}
+		// 				if tmpIndexIdx >= 0 {
+		// 					parents = append(parents, indexIdx)
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// })
+
+		// fmt.Printf("brute force: %d search results found in %s\n", len(matches), latencyBruteFoce)
+
 		var searchRes pkg.SearchResult
 		latency := pkg.MeasureTime(func() {
 			searchRes = index.SearchWithOpts(query, pkg.SearchOpts{
@@ -76,6 +99,7 @@ func main() {
 
 		fmt.Printf("%d search results found in %s\n", searchRes.Occurrences, latency)
 		searchRes.Display(pkg.SearchResultOpts{
+			PrefixLength: 50,
 			SuffixLength: 100,
 			ShowParent:   true,
 		})
